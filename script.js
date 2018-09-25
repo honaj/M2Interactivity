@@ -26,7 +26,7 @@ function remap(value, low1, high1, low2, high2) {
   return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
 
-//Map object name class
+//Set text object
 function name(x, y, inName) {
   this.x = x;
   this.y = y;
@@ -41,20 +41,23 @@ function name(x, y, inName) {
   container.style.top = y + "px";
   container.style.fontFamily = 'funkisMAUdemo';
 
+  //Animate text
   this.update = function() {
-   /*  x = lerp(x, pointerX, 0.05);
-    y = lerp(y, pointerY, 0.05); */
+    /* x = lerp(x, pointerX, 0.05);
+    y = lerp(y, pointerY, 0.05);  */
     /* (window.innerWidth / 2)
     (window.innerHeight / 2) */
+    //Get distance and convert to 0-1
     let a = x - (pointerX);
     let b = y - (pointerY);
     let distance = Math.sqrt(a*a + b*b);
-    //console.log(distance);
     let distanceRemapped = remap(distance, 0, 750, 0, 1);
     container.style.left = x + "px";
     container.style.top = y + "px";
-    container.style.fontSize = lerp(70, 30, distanceRemapped) + "px";
-    
+    let targetSize = lerp(80, 35, distanceRemapped);
+    let newSize = lerp(parseFloat(window.getComputedStyle(container).getPropertyValue("font-size")), targetSize, 0.1);
+    container.style.fontSize = newSize + "px";
+    container.style.fontVariationSettings = "wght" + targetSize;
   }
 }
 
@@ -85,7 +88,6 @@ function onPointerMove(e) {
   const relativeY = Math.min(1, e.clientY / document.body.clientHeight);
   pointerY = e.clientY;
   pointerX = e.clientX;
-  //console.log(distance);
   // Cancel existing animation if it's there
   if (player != null) player.cancel();
 
