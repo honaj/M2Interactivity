@@ -43,13 +43,15 @@ function name(x, y, inName) {
 
   //Animate text
   this.update = function() {
-    /* x = lerp(x, pointerX, 0.05);
-    y = lerp(y, pointerY, 0.05);  */
+     //x = lerp(x, pointerX, 0.1);
+   // y = lerp(y, pointerY, 0.05);
     /* (window.innerWidth / 2)
     (window.innerHeight / 2) */
     //Get distance and convert to 0-1
-    let a = x - (pointerX);
-    let b = y - (pointerY);
+   /*  let a = x - (window.innerWidth / 2);
+    let b = y - (window.innerHeight / 2); */
+    let a = x - (window.innerWidth / 2);
+    let b = y - (window.innerHeight / 2);
     let distance = Math.sqrt(a*a + b*b);
     let distanceRemapped = remap(distance, 0, 750, 0, 1);
     container.style.left = x + "px";
