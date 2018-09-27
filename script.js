@@ -18,10 +18,12 @@ function onDocumentReady() {
   setInterval(updateText, 16);
 }
 
+//Interpolation
 function lerp(v0, v1, t) {
   return v0*(1-t)+v1*t;
 }
 
+//Remap value to arbitrary range
 function remap(value, low1, high1, low2, high2) {
   return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
@@ -37,9 +39,18 @@ function name(x, y, inName) {
   container.appendChild(nameText);
   document.body.appendChild(container);
   container.style.position = "absolute";
-  container.style.left = x + "px";
-  container.style.top = y + "px";
+  //container.style.left = x + "px";
+  //container.style.top = y + "px";
   container.style.fontFamily = 'funkisMAUdemo';
+
+  let radius = Math.random() * window.innerHeight  - 200;
+  let angle = Math.random() * 360;
+
+  this.rotateAround = function(angle) {
+    let px = (window.innerWidth / 2) + radius * Math.cos(angle);
+    let py = (window.innerHeight / 2) + radius * Math.sin(angle);
+    return px, py;
+  }
 
   //Animate text
   this.update = function() {
@@ -50,12 +61,17 @@ function name(x, y, inName) {
     //Get distance and convert to 0-1
    /*  let a = x - (window.innerWidth / 2);
     let b = y - (window.innerHeight / 2); */
+
+    let px = (window.innerWidth / 2) + radius * Math.cos(angle);
+    let py = (window.innerHeight / 2) + radius * Math.sin(angle);
+    angle = (angle + Math.PI / 360) % (Math.PI * 2);
+    container.style.left = px + "px";
+    container.style.top = py + "px";
     let a = x - (window.innerWidth / 2);
     let b = y - (window.innerHeight / 2);
     let distance = Math.sqrt(a*a + b*b);
     let distanceRemapped = remap(distance, 0, 750, 0, 1);
-    container.style.left = x + "px";
-    container.style.top = y + "px";
+    
     let targetSize = lerp(80, 35, distanceRemapped);
     let newSize = lerp(parseFloat(window.getComputedStyle(container).getPropertyValue("font-size")), targetSize, 0.1);
     container.style.fontSize = newSize + "px";
