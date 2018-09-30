@@ -2,20 +2,27 @@ var player;
 var lastX = 0;
 var lastY = 0;
 let touching = false;
+
 let names = [];
 let pointerX = 0;
 let pointerY = 0;
-let nameArray = ["MUSEUM", "TRAIN STATION", "BEACH", "MALL", "OLD TOWN"];
+let nameArray = ["MUSEUM", "TRAIN STATION", "BEACH", "MALL", "OLD TOWN", "RIVER"];
+let deviceRotation = 0;
 
 function onDocumentReady() {
   document.addEventListener('pointermove', onPointerMove);
   document.addEventListener("pointerdown", onPointerDown);
   document.addEventListener("pointerup", onPointerUp);
-  for(let i = 0; i < nameArray.length; i++) {
-    names.push(new name(Math.random() * window.innerWidth, Math.random() * window.innerHeight, nameArray[i]));
-    
+  window.addEventListener("deviceorientation", handleOrientation);
+  for(nameText of nameArray) {
+    names.push(new name(nameText));
   }
   setInterval(updateText, 16);
+  
+}
+
+function handleOrientation(e) {
+  deviceRotation = event.alpha;
 }
 
 //Interpolation
@@ -29,61 +36,43 @@ function remap(value, low1, high1, low2, high2) {
 }
 
 //Set text object
-function name(x, y, inName) {
-  this.x = x;
-  this.y = y;
-  let startX = x;
-  let startY = y;
+function name(inName) {
   let container = document.createElement("H1");
   let nameText = document.createTextNode(inName);
   container.appendChild(nameText);
   document.body.appendChild(container);
   container.style.position = "absolute";
-  //container.style.left = x + "px";
-  //container.style.top = y + "px";
   container.style.fontFamily = 'funkisMAUdemo';
 
-  let radius = Math.random() * window.innerHeight  - 200;
-  let angle = Math.random() * 360;
-
-  this.rotateAround = function(angle) {
-    let px = (window.innerWidth / 2) + radius * Math.cos(angle);
-    let py = (window.innerHeight / 2) + radius * Math.sin(angle);
-    return px, py;
-  }
+  let radius = Math.random() * (window.innerHeight / 2);
+  let baseAngle = Math.random() * 360;
+  let angle = 0;
+  let pos = {x: 0, y: 0};
 
   //Animate text
   this.update = function() {
-     //x = lerp(x, pointerX, 0.1);
-   // y = lerp(y, pointerY, 0.05);
-    /* (window.innerWidth / 2)
-    (window.innerHeight / 2) */
-    //Get distance and convert to 0-1
-   /*  let a = x - (window.innerWidth / 2);
-    let b = y - (window.innerHeight / 2); */
-
-    let px = (window.innerWidth / 2) + radius * Math.cos(angle);
-    let py = (window.innerHeight / 2) + radius * Math.sin(angle);
-    angle = (angle + Math.PI / 360) % (Math.PI * 2);
-    container.style.left = px + "px";
-    container.style.top = py + "px";
-    let a = x - (window.innerWidth / 2);
-    let b = y - (window.innerHeight / 2);
-    let distance = Math.sqrt(a*a + b*b);
-    let distanceRemapped = remap(distance, 0, 750, 0, 1);
-    
-    let targetSize = lerp(80, 35, distanceRemapped);
+    //Rotate text
+    let pointerXMapped = remap(pointerX, 0, window.innerWidth, 0, 150);
+    let pointerYMapped = remap(pointerY, 0, window.innerHeight, 0, 150);
+    let oldAngle = angle;
+    angle = lerp(oldAngle, baseAngle + deviceRotation - radius / 360, 0.05);
+    pos = {x: (window.innerWidth / 2) + Math.cos(angle) * radius, y: (window.innerWidth / 2) + Math.sin(angle) * radius};
+    container.style.left = pos.x + "px";
+    container.style.top = pos.y + "px";
+    //Set font size
+    let distanceRemapped = remap(radius, 0, window.innerHeight / 2, 0, 1);
+    let targetSize = lerp(100, 20, distanceRemapped);
     let newSize = lerp(parseFloat(window.getComputedStyle(container).getPropertyValue("font-size")), targetSize, 0.1);
     container.style.fontSize = newSize + "px";
-    container.style.fontVariationSettings = "wght" + targetSize;
+    container.style.fontVariationSettings = "shrp" + targetSize;
   }
 }
 
 //Updte text objects
 function updateText() {
-  names.forEach((name) => {
+  for(name of names) {
     name.update();
-  });
+  }
 }
 
 // Function to map a percent 0..1 to a min/max range

@@ -1,0 +1,8 @@
+{
+  "name": "",
+  "description": "(please see variable\\README.md for common tips + info)",
+  "version": "",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
