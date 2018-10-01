@@ -3,6 +3,7 @@
   "description": "(please see variable\\README.md for common tips + info)",
   "version": "",
   "dependencies": {
+    "circletype": "^2.3.0",
     "express": "^4.16.3"
   }
 }
