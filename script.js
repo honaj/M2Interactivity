@@ -13,14 +13,6 @@ function onDocumentReady() {
   window.addEventListener("deviceorientation", handleOrientation);
   document.body.style.backgroundColor = "rgb(252, 234, 209)";
 
-/*   centerDiv = document.createElement("div");
-  centerDiv.style.position = "absolute";
-  centerDiv.style.top = window.innerHeight / 2;
-  centerDiv.style.left = window.innerWidth / 2;
-  document.body.appendChild(centerDiv); */
- 
-  
-
   for(nameText of nameArray) {
     names.push(new name(nameText));
   }
@@ -46,23 +38,43 @@ function random_rgba() {
   return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + .5 + ')';
 }
 
+/* function circleText(txt, radius) {
+  txt = txt.split("");
+      //classIndex = document.getElementsByClassName("circTxt")[classIndex];
+  
+    var deg = 180 / txt.length,
+      origin = 180;
+  
+    txt.forEach((ea) => {
+      ea = `<p style='height:${radius}px;position:absolute;transform:rotate(${origin}deg);transform-origin:0 100%'>${ea}</p>`;
+      nameText.textContent += ea;
+      origin += deg;
+    });
+}
+ */
 //Set text object
 function name(inName) {
   let container = document.createElement("H1");
   let nameText = document.createTextNode(inName);
+  let splitText = [];
+  let characters = [];
+  let color = random_rgba();
+  splitText = nameText.textContent.split("");
+  nameText.textContent = "";
+  for(char of splitText) {
+    let charContainer = document.createElement("H1");
+    charContainer.style.color = color;
+    charContainer.style.position = "absolute";
+    let newChar = document.createTextNode(char);
+    charContainer.style.position = "absolute";
+    charContainer.style.fontFamily = 'funkisMAUdemo';
+    charContainer.appendChild(newChar);
+    document.body.appendChild(charContainer);
+    characters.push(charContainer);
+  }
   container.appendChild(nameText);
-  //centerDiv.appendChild(container);
   document.body.appendChild(container);
-  let circleName = new CircleType(container);
   let radius = Math.random() * (window.innerWidth / 2);
-  container.style.position = "absolute";
-  container.style.fontFamily = 'funkisMAUdemo';
-  container.style.color = random_rgba();
-  container.style.left = window.innerWidth / 2 + "px";
-  //container.style.left = centerDiv.style.left + radius;
-  //container.style.top = centerDiv.style.top + radius;
-  
-  container.style.top = window.innerHeight / 4 + "px";
   let baseAngle = Math.random() * 360;
   let angle = 0;
   
@@ -72,32 +84,19 @@ function name(inName) {
     let oldAngle = angle;
     let oldRotation = deviceRotation;
     let rawAngle = lerp(oldAngle, (deviceRotation - baseAngle), 0.05);
-    angle = lerp(oldAngle, (deviceRotation), 0.05);
+    angle = lerp(oldAngle, (deviceRotation - baseAngle) * (Math.PI / 180), 0.05);
     let pos = {x: (window.innerWidth / 2) + Math.cos(angle) * radius, y: (window.innerHeight / 2) + Math.sin(angle) * radius};
-    //container.style.left = pos.x + "px";
-    //container.style.top = pos.y + "px";
-    //* (Math.PI / 180)
-    document.body.style.transform = "rotate("+ angle +"deg)";
-    document.body.style.webkitTransform = "rotate("+ angle +"deg)";
-    //container.style.transform = "translate("+ window.innerWidth / 2 + "," + window.innerHeight / 2 +");"
-    //circleName.style.left = window.innerWidth / 2;
-    //circleName.style.top = window.innerHeight / 2;
-    //container.style.transformOrigin = " 0 0"
-    
-    //ircleName.forceHeight(true);
-   // nameText.textContent = parseInt(angle);
-    //Set font size
     let distanceRemapped = remap(radius, 0, window.innerWidth / 2, 0, 1);
-    let targetWeight = lerp(200, 50, distanceRemapped);
-    let targetSize = lerp(50, 20, distanceRemapped);circleName.radius(radius);
-    //let newSize = lerp(parseFloat(window.getComputedStyle(container).getPropertyValue("font-size")), targetSize, 0.1);
-    container.style.fontSize = targetSize + "px";
-    circleName.dir(Math.abs(angle));
-    //container.style.transform = "rotate("+ angle +"deg)";
-    circleName.radius(radiuss);
+      let targetWeight = lerp(200, 50, distanceRemapped);
+      let targetSize = lerp(50, 20, distanceRemapped);
     
-    container.style.fontVariationSettings = '\'wght\' ' + targetWeight + ', \'shrp\' ' + 100;
-    //container.style.fontVariationSettings = '\'shrp\' ' + 100;
+    for(let i = 0; i < characters.length; i++){
+      characters[i].style.left = (window.innerWidth / 2) + Math.cos(angle + (i * 25)) * radius + "px";
+      characters[i].style.top = (window.innerHeight / 2) + Math.sin(angle + (i * 25)) * radius + "px";
+      //characters[i].style.transform = "rotate("+ rawAngle + (i * 25) +"deg)";
+      characters[i].style.fontSize = targetSize + "px";
+      characters[i].style.fontVariationSettings = '\'wght\' ' + targetWeight + ', \'shrp\' ' + 100;
+    }
   }
 }
 
