@@ -38,6 +38,7 @@ function lerp(v0, v1, t) {
   }
 
   function letter(i) {
+    let loc = {x: 0, y: 0};
     let distance = remap(i, 0, 5, 0, 1);
     let textContainer = document.createElement("H1");
     document.body.appendChild(textContainer);
@@ -54,8 +55,10 @@ function lerp(v0, v1, t) {
     let center = {x: window.innerWidth / 2, y: window.innerHeight / 3};
     this.update = function(lerpedPointer) {
         textContainer.style.fontSize = lerp(10, 900, distance) + "px";
-        //textContainer.style.left = lerp(center.x, time, distance) + "px";
-        textContainer.style.top = lerp(center.y, distance) + "px";
+        textContainer.style.left = lerp(center.x, pointerLoc.x, distance) + "px";
+        textContainer.style.top = lerp(center.y, pointerLoc.y, distance) + "px";
+      /*   textContainer.style.left = center.x + pointerLoc.x + "px";
+        textContainer.style.top = center.y + getOrientation. y + "px"; */
         }
     }
 
@@ -68,7 +71,7 @@ for(let i = 0; i < 5; i ++) {
 function drawText() {
     time ++;
     let lerpedPointer = {x: lerp(oldPointerLoc.x, pointerLoc.x, 0.01), y: lerp(oldPointerLoc.y, pointerLoc.y + 500, 0.0001)};
-    console.log(Math.abs(lerpedPointer.x - pointerLoc.x));
+    //console.log(Math.abs(lerpedPointer.x - pointerLoc.x));
     for(letter of letters) {
         letter.update(lerpedPointer);
     }
