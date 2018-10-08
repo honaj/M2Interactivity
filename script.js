@@ -39,7 +39,7 @@ function getRandomArbitrary(min, max) {
 //Random color
 function random_rgba() {
   var o = Math.round, r = Math.random, s = 255;
-  return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + 1 + ')';
+  return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + .5 + ')';
 }
 
 //Create text object
@@ -68,6 +68,19 @@ function name(inName, inRadius, inAngle) {
     document.body.appendChild(charContainer);
     characters.push(charContainer);
   }
+
+  function angle(cx, cy, ex, ey) {
+    var dy = ey - cy;
+    var dx = ex - cx;
+    var theta = Math.atan2(dy, dx); // range (-PI, PI]
+    theta *= 180 / Math.PI; // rads to degs, range (-180, 180]
+    return theta;
+  }
+  function angle360(cx, cy, ex, ey) {
+    var theta = angle(cx, cy, ex, ey); // range (-180, 180]
+    if (theta < 0) theta = 360 + theta; // range [0, 360)
+    return theta;
+  }
   
   //Animate text
   this.update = function() {
@@ -93,8 +106,8 @@ function name(inName, inRadius, inAngle) {
       textDistance = remap(radius, 0, (window.innerWidth / 2), 30, 20);
       let pos = {x: (window.innerWidth / 2) + Math.cos(posAngle + (i * textDistance / radius)) * radius, 
       y: (window.innerHeight / 2) + Math.sin(posAngle + (i * textDistance / radius)) * radius};
-      var angleDeg = Math.atan2(pos.y - (window.innerHeight / 2), pos.x - (window.innerWidth / 2)) * (Math.Pi / 180);
-      characters[i].style.transform = "rotate("+ angleDeg +"deg)";
+      let textAngle = angle360(pos.x, pos.y, window.innerWidth / 2, window.innerHeight / 2) -90;
+      characters[i].style.transform = "rotate("+textAngle+"deg)";
       characters[i].style.left = pos.x + "px";
       characters[i].style.top = pos.y + "px";
       //characters[i].style
