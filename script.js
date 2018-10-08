@@ -12,7 +12,7 @@ function onDocumentReady() {
   window.addEventListener("deviceorientation", handleOrientation);
   document.body.style.backgroundColor = "rgb(252, 234, 209)";
   for(let[index, nameText] of nameArray.entries()) {
-    names.push(new name(nameText, 100 + index * 10, Math.random() * 360));
+    names.push(new name(nameText, 100 + index * 10, index * 150));
   }
   setInterval(updateText, 16);
 }
@@ -48,14 +48,14 @@ function name(inName, inRadius, inAngle) {
   let splitText = [];
   let characters = [];
   let color = random_rgba();
-  let radius = getRandomArbitrary(80, (window.innerWidth / 2));
-  let baseAngle = Math.random() * 360;
-  /* let radius = inRadius;
-  let baseAngle = inAngle; */
+  /* let radius = getRandomArbitrary(80, (window.innerWidth / 2));
+  let baseAngle = Math.random() * 360; */
+  let radius = inRadius;
+  let baseAngle = inAngle;
   let posAngle = 0;
   let rotAngle = 0;
   splitText = nameText.textContent.split("");
-  splitText.reverse();
+  //splitText.reverse();
   nameText.textContent = "";
   for(char of splitText) {
     let charContainer = document.createElement("H1");
@@ -90,11 +90,11 @@ function name(inName, inRadius, inAngle) {
       characters[i].style.fontSize = textSize + "px";
       characters[i].style.fontVariationSettings = '\'wght\' ' + targetWeight + ', \'shrp\' ' + 100;
       //textDistance = remap(textSize, 60, 20, 25, 26);
-      textDistance = remap(radius, 0, (window.innerWidth / 2), 25, 10);
+      textDistance = remap(radius, 0, (window.innerWidth / 2), 30, 20);
       let pos = {x: (window.innerWidth / 2) + Math.cos(posAngle + (i * textDistance / radius)) * radius, 
       y: (window.innerHeight / 2) + Math.sin(posAngle + (i * textDistance / radius)) * radius};
       var angleDeg = Math.atan2(pos.y - (window.innerHeight / 2), pos.x - (window.innerWidth / 2)) * (Math.Pi / 180);
-      //characters[i].style.transform = "rotate("+ angleDeg +"deg)";
+      characters[i].style.transform = "rotate("+ angleDeg +"deg)";
       characters[i].style.left = pos.x + "px";
       characters[i].style.top = pos.y + "px";
       //characters[i].style
