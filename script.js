@@ -6,13 +6,10 @@ let nameArray = ["MUSEUM", "TRAIN STATION", "BEACH", "MALL", "OLD TOWN", "RIVER"
 let compassHeading = {x: 0, y: 0, z: 0};
 
 function onDocumentReady() {
-  document.addEventListener('pointermove', onPointerMove);
-  document.addEventListener("pointerdown", onPointerDown);
-  document.addEventListener("pointerup", onPointerUp);
   window.addEventListener("deviceorientation", handleOrientation);
   document.body.style.backgroundColor = "rgb(252, 234, 209)";
   for(let[index, nameText] of nameArray.entries()) {
-    names.push(new name(nameText, 80 + index * 15, index * 150));
+    names.push(new name(nameText, 80 + index * 15, index * 150, index));
   }
   setInterval(updateText, 16);
 }
@@ -31,11 +28,6 @@ function remap(value, low1, high1, low2, high2) {
   return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
 
-//Random in range
-function getRandomArbitrary(min, max) {
-  return Math.random() * (max - min) + min;
-}
-
 //Random color
 function random_rgba() {
   var o = Math.round, r = Math.random, s = 255;
@@ -43,7 +35,7 @@ function random_rgba() {
 }
 
 //Create text object
-function name(inName, inRadius, inAngle) {
+function name(inName, inRadius, inAngle, index) {
   let nameText = document.createTextNode(inName);
   let splitText = [];
   let characters = [];
@@ -54,10 +46,11 @@ function name(inName, inRadius, inAngle) {
   let rotAngle = 0;
   splitText = nameText.textContent.split("");
   nameText.remove();
-  //
+  
+  //Split text string and put characters in individual text elements
   for(char of splitText) {
     let charContainer = document.createElement("H1");
-    charContainer.style.color = color;
+    charContainer.style.color = "rgb(0, 0, 0)";
     charContainer.style.position = "absolute";
     let newChar = document.createTextNode(char);
     charContainer.style.position = "absolute";
@@ -94,7 +87,6 @@ function name(inName, inRadius, inAngle) {
       let oldRotAngle = rotAngle;
       let newRot = remap(i, 0, characters.length, 0, 360);
       rotAngle = lerp(oldRotAngle, (compassHeading.x - newRot) * (Math.PI / 180), 0.05);
-      
       //characters[i].style.textShadow = "10px 10px 5px #BFBFBF"; 
       let textDistance = remap(radius, 0, (window.innerWidth / 2), 30, 20);
       let pos = {x: (window.innerWidth / 2) + Math.cos(posAngle + (i * textDistance / radius)) * radius + (compassHeading.z * distanceRemapped), 
@@ -103,7 +95,8 @@ function name(inName, inRadius, inAngle) {
       //let textSize = Math.abs(0 - posAngle) * 10
       //console.log(textSize)
       characters[i].style.fontSize = textSize + "px";
-      characters[i].style.fontVariationSettings = '\'wght\' ' + targetWeight + ', \'shrp\' ' + 100;
+      //console.log(200 - (index * 20))
+      characters[i].style.fontVariationSettings = '\'wght\' ' + Math.abs(200 - (index * 10)) + ', \'shrp\' ' + 100;
       let textAngle = angle360(pos.x, pos.y, window.innerWidth / 2, window.innerHeight / 2) -90; 
       characters[i].style.transform = "rotate(" + textAngle + "deg)";
       characters[i].style.left = pos.x + "px";
@@ -117,19 +110,6 @@ function updateText() {
   for(name of names) {
     name.update();
   }
-}
-
-function onPointerDown(e) {
-  touching = true;
-}
-
-function onPointerUp(e) {
-  touching = false;
-}
-
-function onPointerMove(e) {
-  pointerY = e.clientY;
-  pointerX = e.clientX;
 }
 
 if (document.readyState != 'loading') {

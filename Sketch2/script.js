@@ -40,7 +40,8 @@ function lerp(v0, v1, t) {
     let char = document.createTextNode("METRO");
     textContainer.appendChild(char);
     textContainer.style.position = "absolute";
-    textContainer.style.fontFamily = 'funkisMAUdemo';
+    textContainer.style.fontFamily = 'fun
+    kisMAUdemo';
     let colorFade = lerp(0, 255, distance);
     textContainer.style.color =  "rgba("+colorFade+","+colorFade+","+colorFade+",1)";
     textContainer.style.fontSize = lerp(10, 200, distance) + "px";
