@@ -2,7 +2,7 @@ let touching = false;
 let names = [];
 let pointerX = 0;
 let pointerY = 0;
-let nameArray = ["MUSEUM", "TRAIN STATION", "BEACH", "MALL", "OLD TOWN", "RIVER", "PARK", "THEATRE", "OPERA", "SHOPPING STREET", "RESTAURANT", "CAFÈ"];
+let nameArray = ["MUSEUM", "TRAIN STATION", "BEACH", "MALL", "OLD TOWN", "RIVER", "PARK", "THEATRE", "OPERA", "SHOPPING STREET", "RESTAURANT", "CAFÈ", "ZOO", "HOTEL"];
 let compassHeading = {x: 0, y: 0, z: 0};
 
 function onDocumentReady() {
@@ -12,7 +12,7 @@ function onDocumentReady() {
   window.addEventListener("deviceorientation", handleOrientation);
   document.body.style.backgroundColor = "rgb(252, 234, 209)";
   for(let[index, nameText] of nameArray.entries()) {
-    names.push(new name(nameText, 100 + index * 10, index * 150));
+    names.push(new name(nameText, 80 + index * 15, index * 150));
   }
   setInterval(updateText, 16);
 }
@@ -39,7 +39,7 @@ function getRandomArbitrary(min, max) {
 //Random color
 function random_rgba() {
   var o = Math.round, r = Math.random, s = 255;
-  return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + .5 + ')';
+  return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + 1 + ')';
 }
 
 //Create text object
@@ -48,15 +48,13 @@ function name(inName, inRadius, inAngle) {
   let splitText = [];
   let characters = [];
   let color = random_rgba();
-  /* let radius = getRandomArbitrary(80, (window.innerWidth / 2));
-  let baseAngle = Math.random() * 360; */
   let radius = inRadius;
   let baseAngle = inAngle;
   let posAngle = 0;
   let rotAngle = 0;
   splitText = nameText.textContent.split("");
-  //splitText.reverse();
-  nameText.textContent = "";
+  nameText.remove();
+  //
   for(char of splitText) {
     let charContainer = document.createElement("H1");
     charContainer.style.color = color;
@@ -69,6 +67,7 @@ function name(inName, inRadius, inAngle) {
     characters.push(charContainer);
   }
 
+  //Calculate angle for character rotation
   function angle(cx, cy, ex, ey) {
     var dy = ey - cy;
     var dx = ex - cx;
@@ -84,33 +83,31 @@ function name(inName, inRadius, inAngle) {
   
   //Animate text
   this.update = function() {
-    let textDistance = 25;
     let oldPosAngle = posAngle;
-    //let oldRotAngle = rotAngle;
     let oldRotation = compassHeading.x;
-    //rotAngle = lerp(oldRotAngle, (compassHeading - baseAngle), 0.05);
-    posAngle = lerp(oldPosAngle, (compassHeading.x - baseAngle) * (Math.PI / 180), 0.05);
-    //let pos = {x: (window.innerWidth / 2) + Math.cos(angle) * radius, y: (window.innerHeight / 2) + Math.sin(angle) * radius};
+    posAngle = lerp(oldPosAngle, (compassHeading.x - baseAngle) * (Math.PI / 180), 0.07);
     let distanceRemapped = remap(radius, 0, window.innerWidth / 2, 0, 1);
+    let weight = (Math.abs((window.innerWidth / 2) - radius)) / 2;
     let targetWeight = lerp(200, 50, distanceRemapped);
-    //let targetSize = lerp(50, 20, distanceRemapped);
     
     for(let i = characters.length -1; i >= 0; i--){
       let oldRotAngle = rotAngle;
       let newRot = remap(i, 0, characters.length, 0, 360);
       rotAngle = lerp(oldRotAngle, (compassHeading.x - newRot) * (Math.PI / 180), 0.05);
-      let textSize = remap(radius, 0, window.innerWidth / 2, 60, 20);
+      
+      //characters[i].style.textShadow = "10px 10px 5px #BFBFBF"; 
+      let textDistance = remap(radius, 0, (window.innerWidth / 2), 30, 20);
+      let pos = {x: (window.innerWidth / 2) + Math.cos(posAngle + (i * textDistance / radius)) * radius + (compassHeading.z * distanceRemapped), 
+      y: (window.innerHeight / 2) + Math.sin(posAngle + (i * textDistance / radius)) * radius  + (compassHeading.y * distanceRemapped)};
+      let textSize = remap(radius, 0, (window.innerWidth / 2), 60, 30);
+      //let textSize = Math.abs(0 - posAngle) * 10
+      //console.log(textSize)
       characters[i].style.fontSize = textSize + "px";
       characters[i].style.fontVariationSettings = '\'wght\' ' + targetWeight + ', \'shrp\' ' + 100;
-      //textDistance = remap(textSize, 60, 20, 25, 26);
-      textDistance = remap(radius, 0, (window.innerWidth / 2), 30, 20);
-      let pos = {x: (window.innerWidth / 2) + Math.cos(posAngle + (i * textDistance / radius)) * radius, 
-      y: (window.innerHeight / 2) + Math.sin(posAngle + (i * textDistance / radius)) * radius};
-      let textAngle = angle360(pos.x, pos.y, window.innerWidth / 2, window.innerHeight / 2) -90;
-      characters[i].style.transform = "rotate("+textAngle+"deg)";
+      let textAngle = angle360(pos.x, pos.y, window.innerWidth / 2, window.innerHeight / 2) -90; 
+      characters[i].style.transform = "rotate(" + textAngle + "deg)";
       characters[i].style.left = pos.x + "px";
       characters[i].style.top = pos.y + "px";
-      //characters[i].style
     }
   }
 }
