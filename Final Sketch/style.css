@@ -1,0 +1,33 @@
+@font-face {
+    font-family: 'funkisMAUDemo';
+    src: url('FunkisMAUDemoGX.ttf');
+  }
+
+  html {
+    box-sizing: border-box;
+    height: 100%;
+  }
+ 
+  body {
+    padding: 0;
+    margin: 1em;
+    height: 100%;
+    background: #c5f7eb;
+}
+    
+#container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+      }
+
+#pangram {
+  
+    font-family: 'funkisMAUDemo';
+    font-size: 70em;
+    font-style: 'shrp' 100;
+    font-variation-settings: "wght" 200, "shrp" 0, "term" 0, "dots" 0, "inkt" 0, "wdth" 0;
+  }
+  
